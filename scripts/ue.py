@@ -1,13 +1,18 @@
 #! /usr/bin/python3
 
 import subprocess
-import atexit
+import time
+import signal
+import threading
+import os
 
 UE_BINARY = "./../build/nr-ue"
+NR_CLI_BINARY = "./../build/nr-cli"
 
 class UE:
     
     supi = None # EX: imsi-208930000000001
+    process = None
     
     def __init__(self, supi):
         self.supi = supi
@@ -24,24 +29,55 @@ class UE:
             f.write(data)
             f.close()
         
+        # SIGINT
+        def handler(signum, frame):
+            print(f"\n\n===============\n[INFO] UE {self.supi} received SIGINT")
+            self.deregister()
+            self.stop()
+            
+        signal.signal(signal.SIGINT, handler)
+    
+    
     def start(self):
-        print(f"Starting UE {self.supi}")
+        print(f"[INFO] Starting UE {self.supi}")
         
-        atexit.register(self.stop)
-        self.authenticate()
+        if not self.authenticate():
+            return
         
+        print(f"[INFO] UE {self.supi} is running")
+        self.process.wait()
+        
+        print(f"[INFO] UE {self.supi} has stopped")
+        
+
     def stop(self):
-        print(f"Stopping UE {self.supi}")
+        print(f"[INFO] Stopping UE {self.supi}")
         
         # delete config file
         subprocess.run(["rm", f"{self.config_file}"])
+        self.process.send_signal(signal.SIGINT)
     
-    def authenticate(self):
-        print(f"UE: {self.supi} Authenticating")
+    
+    def authenticate(self) -> bool:
+        print(f"[INFO] UE: {self.supi} Authenticating")
         
-        # run shell code 
-        subprocess.run([f"{UE_BINARY}", "-c", f"{self.config_file}"])
+        try:
+            self.process = subprocess.Popen(
+                [f"{UE_BINARY}", "-c", f"{self.config_file}"],
+                preexec_fn=os.setpgrp) # Ignore SIGINT in the child process
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
+        return True
+    
+    
+    def deregister(self):
+        print(f"[INFO] UE: {self.supi} Deregistering")
         
+        subprocess.run([f"{NR_CLI_BINARY}", f"{self.supi}", "-e", "deregister switch-off"])
+        
+        print(f"[INFO] UE: {self.supi} Deregistered, waiting 2 seconds")
+        time.sleep(2)
     
 
 def __main__():
