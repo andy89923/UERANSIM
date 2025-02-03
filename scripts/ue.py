@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/sudo /usr/bin/python3
 
 import subprocess
 import time
@@ -16,6 +16,8 @@ class UE:
 
     def __init__(self, supi):
         self.supi = supi
+        self.ip = None
+        self.tunnel = None
         self.config_file = f"ue-{self.supi}.yaml"
 
         # Build config file
@@ -44,6 +46,25 @@ class UE:
             return
 
         print(f"[INFO] UE {self.supi} is running")
+
+        # Connection setup for PDU session[1] is successful, TUN interface[uesimtun0, 10.60.0.3] is up
+        # stdout, _ = self.process.communicate()
+
+        with self.process.stdout:
+            for line in iter(self.process.stdout.readline, ""):
+                if line.strip() == b"":
+                    break
+                msg = line.strip().decode("utf-8")
+                print(msg)
+                if "Connection setup for PDU session[1] is successful" in msg:
+                    self.ip = msg.split(",")[2].split(" ")[1].split("]")[0]
+                    self.tunnel = msg.split(",")[1].split("[")[1]
+                    print(f"================================================")
+                    print(
+                        f"[INFO] UE {self.supi} is connected to {self.ip} via {self.tunnel}"
+                    )
+                    print(f"================================================")
+
         self.process.wait()
 
         print(f"[INFO] UE {self.supi} has stopped")
@@ -62,7 +83,10 @@ class UE:
             # Ignore SIGINT in the child process
             # preexec_fn=os.setpgrp
             self.process = subprocess.Popen(
-                [f"{UE_BINARY}", "-c", f"{self.config_file}"], preexec_fn=os.setpgrp
+                [f"{UE_BINARY}", "-c", f"{self.config_file}"],
+                preexec_fn=os.setpgrp,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
         except Exception as e:
             print(f"Error: {e}")
