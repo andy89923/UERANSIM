@@ -3,11 +3,13 @@
 import subprocess
 import time
 import signal
-import threading
 import os
+from colorama import Fore, Style
 
 UE_BINARY = "./../build/nr-ue"
 NR_CLI_BINARY = "./../build/nr-cli"
+
+SEPARATOR = "=" * 80
 
 
 class UE:
@@ -33,7 +35,9 @@ class UE:
 
         # SIGINT
         def handler(signum, frame):
-            print(f"\n\n===============\n[INFO] UE {self.supi} received SIGINT")
+            print(
+                f"\n\n{SEPARATOR}\n{Fore.YELLOW}[INFO] UE {self.supi} received SIGINT{Style.RESET_ALL}"
+            )
             self.deregister()
             self.stop()
 
@@ -59,15 +63,16 @@ class UE:
                 if "Connection setup for PDU session[1] is successful" in msg:
                     self.ip = msg.split(",")[2].split(" ")[1].split("]")[0]
                     self.tunnel = msg.split(",")[1].split("[")[1]
-                    print(f"================================================")
+                    print(f"{SEPARATOR}")
+                    # Add color to the output
                     print(
-                        f"[INFO] UE {self.supi} is connected to {self.ip} via {self.tunnel}"
+                        f"{Fore.GREEN}[INFO] UE {self.supi} is connected to {self.ip} via {self.tunnel}{Style.RESET_ALL}"
                     )
-                    print(f"================================================")
+                    print(f"{SEPARATOR}")
 
         self.process.wait()
 
-        print(f"[INFO] UE {self.supi} has stopped")
+        print(f"{Fore.RED}[INFO] UE {self.supi} has stopped")
 
     def stop(self):
         print(f"[INFO] Stopping UE {self.supi}")
