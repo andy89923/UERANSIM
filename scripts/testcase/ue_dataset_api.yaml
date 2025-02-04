@@ -1,0 +1,90 @@
+openapi: 3.0.3
+
+info:
+  title: UE Dataset API
+  description: API definition for UE activity dataset.
+  version: 1.0.0
+
+components:
+  schemas:
+    
+    Dataset:
+      type: object
+      properties:
+        Nane:
+          type: string
+          example: "Sample Dataset"
+        UE:
+          type: array
+          items:
+            $ref: '#/components/schemas/UE'
+          default: []
+        Application:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+      
+    Application:
+      type: object
+      properties:
+        Id:
+          type: integer
+          example: 1
+    
+    AppInterval:
+      type: object
+      properties:
+        AppId:
+          type: integer
+          example: 1
+        start_time:
+          type: number
+          format: float
+          description: Start time of the application
+          example: 16.3
+        end_time:
+          type: number
+          format: float
+          description: End time of the application
+          example: 163.52
+    
+    UE:
+      type: object
+      properties:
+        Id:
+          type: integer
+          description: Unique identifier for the UE
+          example: 0
+        IMSI:
+          type: string
+          description: IMSI for the UE
+          example: imsi-208930000008888
+        Arrival_time:
+          type: number
+          format: float
+          description: Time when the UE arrives in the network
+          example: 1.38
+        Applications:
+          type: array
+          description: List of applications with start and end times
+          items:
+            $ref: '#/components/schemas/AppInterval'
+        Leave_time:
+          type: number
+          format: float
+          description: Time when the UE leaves the network
+          example: 82.25
+          
+paths:
+  /dataset:
+    get:
+      summary: Get the UE dataset
+      responses:
+        '200':
+          description: Successful response with UE dataset
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Dataset'
