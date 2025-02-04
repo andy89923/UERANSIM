@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -27,7 +27,10 @@ class Application(BaseModel):
     Application
     """ # noqa: E501
     id: Optional[StrictInt] = Field(default=None, alias="Id")
-    __properties: ClassVar[List[str]] = ["Id"]
+    description: Optional[StrictStr] = Field(default=None, alias="Description")
+    max_br: Optional[StrictStr] = Field(default=None, alias="MaxBR")
+    min_br: Optional[StrictStr] = Field(default=None, alias="MinBR")
+    __properties: ClassVar[List[str]] = ["Id", "Description", "MaxBR", "MinBR"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +83,10 @@ class Application(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "Id": obj.get("Id")
+            "Id": obj.get("Id"),
+            "Description": obj.get("Description"),
+            "MaxBR": obj.get("MaxBR"),
+            "MinBR": obj.get("MinBR")
         })
         return _obj
 

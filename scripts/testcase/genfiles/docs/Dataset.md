@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**nane** | **str** |  | [optional] 
+**name** | **str** |  | [optional] 
 **ue** | [**List[UE]**](UE.md) |  | [optional] [default to []]
 **application** | [**List[Application]**](Application.md) |  | [optional] 
 

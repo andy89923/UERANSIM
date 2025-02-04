@@ -11,7 +11,7 @@ components:
     Dataset:
       type: object
       properties:
-        Nane:
+        Name:
           type: string
           example: "Sample Dataset"
         UE:
@@ -30,6 +30,16 @@ components:
         Id:
           type: integer
           example: 1
+        Description:
+          type: string
+          example: "Sample Application Definition"
+        MaxBR:
+          type: string
+          example: 30M
+        MinBR:
+          type: string
+          example: 3M
+        
     
     AppInterval:
       type: object

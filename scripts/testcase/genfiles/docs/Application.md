@@ -6,6 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **int** |  | [optional] 
+**description** | **str** |  | [optional] 
+**max_br** | **str** |  | [optional] 
+**min_br** | **str** |  | [optional] 
 
 ## Example
 

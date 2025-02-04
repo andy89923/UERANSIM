@@ -1,0 +1,26 @@
+{
+    "Name": "Sample Dataset",
+    "Application": [
+        {
+            "Id": 0,
+            "Description": "Sample Application",
+            "MaxBR": "10M",
+            "MinBR": "1M"
+        }
+    ],
+    "UE": [
+        {
+            "Id": 0,
+            "IMSI": "imsi-208930000008888",
+            "Arrival_Time": 16.3,
+            "Leave_Time": 50.3,
+            "AppInterval": [
+                {
+                    "Id": 0,
+                    "start_time": 20.3,
+                    "end_time": 40.3
+                }
+            ]
+        }
+    ]
+}

@@ -28,10 +28,10 @@ class Dataset(BaseModel):
     """
     Dataset
     """ # noqa: E501
-    nane: Optional[StrictStr] = Field(default=None, alias="Nane")
+    name: Optional[StrictStr] = Field(default=None, alias="Name")
     ue: Optional[List[UE]] = Field(default=None, alias="UE")
     application: Optional[List[Application]] = Field(default=None, alias="Application")
-    __properties: ClassVar[List[str]] = ["Nane", "UE", "Application"]
+    __properties: ClassVar[List[str]] = ["Name", "UE", "Application"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -98,7 +98,7 @@ class Dataset(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "Nane": obj.get("Nane"),
+            "Name": obj.get("Name"),
             "UE": [UE.from_dict(_item) for _item in obj["UE"]] if obj.get("UE") is not None else None,
             "Application": [Application.from_dict(_item) for _item in obj["Application"]] if obj.get("Application") is not None else None
         })
