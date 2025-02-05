@@ -26,9 +26,9 @@ class UserEquipment:
         self,
         Id: int,
         IMSI: str,
-        Arrival_Time: float,
-        Leave_Time: float,
-        AppInterval: List[AppInterval],
+        Arrival_Time: float = 0.0,
+        Leave_Time: float = 0.0,
+        AppInterval: List[AppInterval] = [],
     ):
         self.Id = Id
         self.IMSI = IMSI

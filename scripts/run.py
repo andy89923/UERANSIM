@@ -16,9 +16,12 @@ def __main__():
     data = dataset.Dataset()
     data.from_json(rawdata)
 
-    print("Dataset:", data)
+    print(f"Using Dataset: {data.Name}")
 
-    print("Dict:\n", data.to_dict())
+    # Application Map
+    app_map = {}
+    for app in data.Application:
+        app_map[app.Id] = app
 
 
 if __name__ == "__main__":
