@@ -17,7 +17,7 @@ NR_CLI_BINARY = "./../build/nr-cli"
 SEPARATOR = "=" * 80
 
 SERVER_IP = "140.113.208.76"
-SERVER_PORT = 5000
+SERVER_PORT = 2163
 SERVER_URI = f"http://{SERVER_IP}:{SERVER_PORT}"
 CLIENT_PORT = 5001
 
@@ -60,6 +60,16 @@ class UE:
         # Start UDP socker to receive data
         self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_socket.bind((self.ip, CLIENT_PORT))
+
+        # Start thread to receive data
+        self.udp_thread = threading.Thread(target=self._receive_data)
+        self.udp_thread.start()
+
+    def _receive_data(self):
+        while True:
+            _, _ = self.udp_socket.recvfrom(65535)
+            # print(f"[INFO] UE {self.supi} received data: {data}")
+            pass
 
     def start(self):
         print(f"[INFO] Starting UE {self.supi}")
@@ -133,6 +143,7 @@ class UE:
         data = {
             "src": self.ip,
             "MaxRate": mxRate,
+            "AvgRate": mxRate,
             "MinRate": minRate,
         }
         try:

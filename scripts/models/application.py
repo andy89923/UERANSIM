@@ -13,10 +13,11 @@ from typing_extensions import Self
 
 class Application:
 
-    def __init__(self, Id: int, Description: str, MaxBR: str, MinBR: str):
+    def __init__(self, Id: int, Description: str, MaxBR: str, AvgBR: str, MinBR: str):
         self.Id = Id
         self.Description = Description
         self.MaxBR = MaxBR
+        self.AvgBR = AvgBR
         self.MinBR = MinBR
 
     def __str__(self):
@@ -27,6 +28,7 @@ class Application:
             "Id": self.Id,
             "Description": self.Description,
             "MaxBR": self.MaxBR,
+            "AvgBR": self.AvgBR,
             "MinBR": self.MinBR,
         }
 
@@ -37,5 +39,6 @@ class Application:
             Id=obj.get("Id"),
             Description=obj.get("Description"),
             MaxBR=obj.get("MaxBR"),
+            AvgBR=obj.get("AvgBR"),
             MinBR=obj.get("MinBR"),
         )
