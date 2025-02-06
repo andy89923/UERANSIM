@@ -43,7 +43,7 @@ def start_traffic(ue_ip, max_rate, avg_rate, min_rate):
         for data in packet_datas:
             try:
                 conn.send(data)
-                # tcp_socket.sendto(data, (ue_ip, target_port))
+                # print(f"Sent {len(data)} bytes to UE {ue_ip} at bitrate {bitrate} bps")
             except Exception as e:
                 print(f"Error sending packet to {ue_ip}: {e}")
                 pass

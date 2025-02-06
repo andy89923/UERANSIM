@@ -16,7 +16,7 @@ NR_CLI_BINARY = "./../build/nr-cli"
 
 SEPARATOR = "=" * 80
 
-SERVER_IP = "140.113.208.76"
+SERVER_IP = "140.113.208.88"
 SERVER_PORT = 2163
 SERVER_URI = f"http://{SERVER_IP}:{SERVER_PORT}"
 CLIENT_PORT = 5001
@@ -59,7 +59,7 @@ class UE:
     def _start_client_port(self):
         # Start UDP socker to receive data
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp_socket.bind((self.ip,))
+        self.tcp_socket.bind((self.ip, 0))
 
         # Start thread to receive data
         self.tcp_thread = threading.Thread(target=self._receive_data)
@@ -67,14 +67,15 @@ class UE:
 
     def _receive_data(self):
         self.tcp_socket.connect((SERVER_IP, CLIENT_PORT))
-
         self.tcp_socket.send(f"{self.ip}".encode())
-        while True and self.transmitting:
+        while True:
             try:
                 data = self.tcp_socket.recv(2000)
                 if data:
+                    # print(f"[DEBG] {self.ip} receive len {len(data)}")
                     pass
                 else:
+                    print(f"[DEBG] {self.ip} server closed!")
                     break
             except Exception as e:
                 print(f"[ERROR] UE: {self.ip} failed to receive data: {e}")
@@ -149,7 +150,7 @@ class UE:
         # Srart traffic
         # send data to the server via the tunnel interface
         data = {
-            "src": self.ip,
+            "src": f"{self.ip}",
             "MaxRate": mxRate,
             "AvgRate": mxRate,
             "MinRate": minRate,
@@ -172,7 +173,7 @@ class UE:
         # Stop traffic
         # send data to the server via the tunnel interface
         data = {
-            "src": self.ip,
+            "src": f"{self.ip}",
         }
         try:
             r = self.session.post(f"{SERVER_URI}/stop-traffic", json=data, timeout=3)
@@ -197,8 +198,8 @@ def __main__():
         return
 
     print(f"{Fore.GREEN}[INFO] UE is running, start traffic{Style.RESET_ALL}")
-    ue1.startTraffic(100, 50)
-    time.sleep(10)
+    ue1.startTraffic("5M", "3M")
+    time.sleep(3)
     ue1.stopTraffic()
 
     thread.join()
