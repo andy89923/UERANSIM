@@ -58,18 +58,26 @@ class UE:
 
     def _start_client_port(self):
         # Start UDP socker to receive data
-        self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.udp_socket.bind((self.ip, CLIENT_PORT))
+        self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.tcp_socket.bind((self.ip,))
 
         # Start thread to receive data
-        self.udp_thread = threading.Thread(target=self._receive_data)
-        self.udp_thread.start()
+        self.tcp_thread = threading.Thread(target=self._receive_data)
+        self.tcp_thread.start()
 
     def _receive_data(self):
-        while True:
-            _, _ = self.udp_socket.recvfrom(65535)
-            # print(f"[INFO] UE {self.supi} received data: {data}")
-            pass
+        self.tcp_socket.connect((SERVER_IP, CLIENT_PORT))
+
+        self.tcp_socket.send(f"{self.ip}".encode())
+        while True and self.transmitting:
+            try:
+                data = self.tcp_socket.recv(2000)
+                if data:
+                    pass
+                else:
+                    break
+            except Exception as e:
+                print(f"[ERROR] UE: {self.ip} failed to receive data: {e}")
 
     def start(self):
         print(f"[INFO] Starting UE {self.supi}")

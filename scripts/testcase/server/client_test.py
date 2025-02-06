@@ -27,28 +27,38 @@ def session_for_src_addr(addr: str):
 
 SERVER_IP = "140.113.208.88"
 SERVER_PORT = 2163
+CLIENT_PORT = 5001
 SERVER_URI = f"http://{SERVER_IP}:{SERVER_PORT}"
 
 transmitting = True
 
 
-def _receive_data(udp_socket):
+def _receive_data(tcp_socket):
     global transmitting
 
-    # non-blocking receive
-    udp_socket.settimeout(1)
+    # Connect to the server
+    tcp_socket.connect((SERVER_IP, CLIENT_PORT))
+    print(f"[INFO] Connected to server")
+
+    # send data
+    tcp_socket.send("127.0.0.1".encode())
+
     while True and transmitting:
         try:
-            data, _ = udp_socket.recvfrom(2000)
-            print(f"[DEBG] received data: {len(data)} bytes")
-        except socket.timeout:
+            data = tcp_socket.recv(2000)
+            if data:
+                pass
+                # print(f"[DEBG] received data: {len(data)} bytes")
+            else:
+                break
+        except Exception as e:
             pass
 
 
 def __main__():
     global transmitting
-    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.bind(("127.0.0.1", 5001))
+    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_socket.bind(("140.113.208.88", 5002))
 
     data = {
         "src": "127.0.0.1",
@@ -57,17 +67,19 @@ def __main__():
         "MinRate": "3M",
     }
     session = session_for_src_addr("127.0.0.1")
-    udp_thread = threading.Thread(target=_receive_data, args=(udp_socket,))
-    udp_thread.start()
 
+    tcp_thread = threading.Thread(target=_receive_data, args=(tcp_socket,))
     try:
         r = session.post(f"{SERVER_URI}/start-traffic", json=data, timeout=3)
         if r.status_code == 200:
             print(f"[INFO] Traffic started")
+            tcp_thread.start()
         else:
             print(f"[ERROR] Traffic failed to start")
+            return
     except Exception as e:
         print(f"[ERROR] Traffic failed to start: {e}")
+        return
 
     time.sleep(10)
 
@@ -82,7 +94,7 @@ def __main__():
     except Exception as e:
         print(f"[ERROR] Traffic failed to stop: {e}")
 
-    udp_thread.join()
+    tcp_thread.join()
 
 
 if __name__ == "__main__":
