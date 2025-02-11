@@ -42,7 +42,7 @@ class UserEquipment:
             + f"IMSI: {self.IMSI}, "
             + f"Arrival_Time: {self.Arrival_Time}, "
             + f"Leave_Time: {self.Leave_Time},\n"
-            + f"└─ AppInterval: {"{\n"}    { ', '.join([str(i) for i in self.AppInterval]) }{"\n}"}"
+            + f"└─ AppInterval: {"{\n"}    { ', '.join([str(i) for i in self.AppInterval]) }{"\n}\n"}"
         )
 
     def to_dict(self):
