@@ -5,6 +5,7 @@
             "Id": 0,
             "Description": "Sample Application",
             "MaxBR": "10M",
+            "AvgBR": "5M",
             "MinBR": "1M"
         }
     ],
@@ -19,6 +20,19 @@
                     "Id": 0,
                     "start_time": 20.3,
                     "end_time": 40.3
+                }
+            ]
+        },
+        {
+            "Id": 1,
+            "IMSI": "imsi-208930000009999",
+            "Arrival_Time": 20.3,
+            "Leave_Time": 45.1,
+            "AppInterval": [
+                {
+                    "Id": 0,
+                    "start_time": 23.1,
+                    "end_time": 42.3
                 }
             ]
         }

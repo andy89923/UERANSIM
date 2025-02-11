@@ -9,6 +9,7 @@ import threading
 
 import socket
 from models import UserEquipment
+from models import Application
 from session import session_for_src_addr
 
 UE_BINARY = "./../build/nr-ue"
@@ -45,16 +46,6 @@ class UE:
         with open(f"{self.config_file}", "w") as f:
             f.write(data)
             f.close()
-
-        # SIGINT
-        def handler(signum, frame):
-            print(
-                f"\n\n{SEPARATOR}\n{Fore.YELLOW}[INFO] UE {self.supi} received SIGINT{Style.RESET_ALL}"
-            )
-            self.deregister()
-            self.stop()
-
-        signal.signal(signal.SIGINT, handler)
 
     def _start_client_port(self):
         # Start UDP socker to receive data
@@ -139,7 +130,7 @@ class UE:
         print(f"[INFO] UE: {self.supi} Deregistered, waiting 2 seconds")
         time.sleep(2)
 
-    def startTraffic(self, mxRate, minRate):
+    def startTraffic(self, application: Application):
         if self.transmitting == True:
             print(
                 f"{Fore.RED}[ERRO] UE: {self.supi} Traffic is already running{Style.RESET_ALL}"
@@ -151,9 +142,9 @@ class UE:
         # send data to the server via the tunnel interface
         data = {
             "src": f"{self.ip}",
-            "MaxRate": mxRate,
-            "AvgRate": mxRate,
-            "MinRate": minRate,
+            "MaxRate": application.MaxBR,
+            "AvgRate": application.AvgBR,
+            "MinRate": application.MinBR,
         }
         try:
             r = self.session.post(f"{SERVER_URI}/start-traffic", json=data, timeout=3)
@@ -187,6 +178,16 @@ class UE:
 def __main__():
     ue1 = UE(UserEquipment(Id=1, IMSI="imsi-208930000008888"))
 
+    # SIGINT
+    def handler(signum, frame):
+        print(
+            f"\n\n{SEPARATOR}\n{Fore.YELLOW}[INFO] UE {ue1.supi} received SIGINT{Style.RESET_ALL}"
+        )
+        ue1.deregister()
+        ue1.stop()
+
+    signal.signal(signal.SIGINT, handler)
+
     # Start UE use threading to run in parallel
     thread = threading.Thread(target=ue1.start)
     thread.start()
@@ -198,7 +199,9 @@ def __main__():
         return
 
     print(f"{Fore.GREEN}[INFO] UE is running, start traffic{Style.RESET_ALL}")
-    ue1.startTraffic("5M", "3M")
+    ue1.startTraffic(
+        Application(Id=1, Description="FTP", MaxBR="10M", AvgBR="5M", MinBR="1M")
+    )
     time.sleep(3)
     ue1.stopTraffic()
 

@@ -37,7 +37,13 @@ class UserEquipment:
         self.AppInterval = AppInterval
 
     def __str__(self):
-        return f"Id: {self.Id}, IMSI: {self.IMSI}, Arrival_Time: {self.Arrival_Time}, Leave_Time: {self.Leave_Time}, AppInterval: {self.Applications}"
+        return (
+            f"Id: {self.Id}, "
+            + f"IMSI: {self.IMSI}, "
+            + f"Arrival_Time: {self.Arrival_Time}, "
+            + f"Leave_Time: {self.Leave_Time},\n"
+            + f"└─ AppInterval: {"{\n"}    { ', '.join([str(i) for i in self.AppInterval]) }{"\n}"}"
+        )
 
     def to_dict(self):
         return {
