@@ -7,11 +7,11 @@ mnc: '93'
 # SUCI Protection Scheme : 0 for Null-scheme, 1 for Profile A and 2 for Profile B
 protectionScheme: 0
 # Home Network Public Key for protecting with SUCI Profile A
-# homeNetworkPublicKey: '5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650'  # A
-homeNetworkPublicKey: 'F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA'    # B
+homeNetworkPublicKey: '5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650'  # A
+# homeNetworkPublicKey: 'F1AB1074477EBCC7F554EA1C5FC368B1616730155E0041AC447D6301975FECDA'    # B
 # Home Network Public Key ID for protecting with SUCI Profile A
-# homeNetworkPublicKeyId: 1
-homeNetworkPublicKeyId: 2 
+homeNetworkPublicKeyId: 1
+# homeNetworkPublicKeyId: 2 
 # Routing Indicator
 routingIndicator: '0000'
 
@@ -27,6 +27,9 @@ amf: '8000'
 imei: '356938035643803'
 # IMEISV number of the device. It is used if no SUPI and IMEI is provided
 imeiSv: '4370816125816151'
+
+# Network mask used for the UE's TUN interface to define the subnet size
+tunNetmask: '255.255.255.0'
 
 # List of gNB IP addresses for Radio Link Simulation
 gnbSearchList:
